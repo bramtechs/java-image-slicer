@@ -1,6 +1,12 @@
 package mit.bramtechs.imageslicer;
 
+import java.awt.Dimension;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 public class Parser {
 
@@ -65,8 +71,53 @@ public class Parser {
 		int height = Integer.parseInt(args[4]);
 		
 		System.out.println("Slicing " + args[0] + " to " + args[1] + " as ("+width+" x "+height+", " + mode +")...");
+		Dimension size = new Dimension(width,height);
+		
+		switch (mode) {
+		case Absolute:
+			pack(inputFile, outputFolder,mode, size);
+			break;
+		case Division:
+			pack(inputFile, outputFolder,mode, size);
+			break;
+		default:
+			throw new ImageSlicerException("Unknown mode " + args[2] + ", pass -a or -d");
+		}
 	}
+		
+	private int getTotalSections(BufferedImage img, Dimension size) {
+		int w = img.getWidth()/size.width;
+		int h = img.getHeight()/size.height;
+		return w*h;
+	}
+	
+	private void pack(File imageFile, File outputDir,SliceMode mode, Dimension size) {
+		BufferedImage image;
+		try {
+			image = ImageIO.read(imageFile);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return;
+		}
+		int amount = getTotalSections(image, size);
 
+		// start the threads
+		Thread[] threads = new Thread[amount];
+		for (int i = 0; i < amount; i++) {
+			threads[i] = new Slicer(i,image,imageFile,outputDir,mode,size);
+			threads[i].start();
+		}
+		
+		// wait for threads to complete
+		for (Thread t : threads) {
+			try {
+				t.join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	public static void main(String[] args) throws ImageSlicerException {
 		new Parser(args);
 	}
