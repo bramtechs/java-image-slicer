@@ -44,11 +44,17 @@ public class Slicer extends Thread {
 		int h = size.height;
 		if (mode == SliceMode.Division) {
 			w = image.getWidth() / size.width;
-			h = image.getHeight() / size.height;
+			h = image.getHeight() / size.height; //1
 		}
 		
 		int x = index % (image.getWidth() / w);
-		int y = index / (image.getHeight() / h);
+		int y = index / (image.getHeight() / h); //16
+		
+		if (mode == SliceMode.Division && image.getHeight() == h) { // ugly patch to prevent bug
+			y = 0;
+		}
+		
+		System.out.println(index+"/"+"("+image.getHeight()+"/"+h+")");
 		
 		BufferedImage subImg = new BufferedImage(w,h,image.getType());
 		Graphics2D g = subImg.createGraphics();

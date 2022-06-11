@@ -85,9 +85,13 @@ public class Parser {
 		}
 	}
 		
-	private int getTotalSections(BufferedImage img, Dimension size) {
-		int w = img.getWidth()/size.width;
-		int h = img.getHeight()/size.height;
+	private int getTotalSections(BufferedImage img, Dimension size, SliceMode mode) {
+		int w = size.width;
+		int h = size.height;
+		if (mode == SliceMode.Absolute) {
+			w = img.getWidth()/size.width;
+			h = img.getHeight()/size.height;
+		}
 		return w*h;
 	}
 	
@@ -99,7 +103,7 @@ public class Parser {
 			e.printStackTrace();
 			return;
 		}
-		int amount = getTotalSections(image, size);
+		int amount = getTotalSections(image, size,mode);
 
 		// start the threads
 		Thread[] threads = new Thread[amount];
