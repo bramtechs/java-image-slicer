@@ -54,7 +54,7 @@ public class Slicer extends Thread {
 			y = 0;
 		}
 		
-		System.out.println(index+"/"+"("+image.getHeight()+"/"+h+")");
+		//System.out.println(index+"/"+"("+image.getHeight()+"/"+h+")");
 		
 		BufferedImage subImg = new BufferedImage(w,h,image.getType());
 		Graphics2D g = subImg.createGraphics();

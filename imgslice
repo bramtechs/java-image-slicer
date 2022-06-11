@@ -1,0 +1,2 @@
+#!/bin/bash
+java -jar /opt/java-image-slicer/java-image-slicer.jar $1 $2 $3 $4 $5 $6
